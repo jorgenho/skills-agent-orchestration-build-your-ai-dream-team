@@ -2,11 +2,11 @@
 
 For Mona's Project Pulse dashboard, I am using a small custom agent team defined under `.github/agents/` and orchestrated with GitHub Copilot CLI in a Codespace.
 
-- Planner — `Claude Sonnet 5.5 (copilot)`
+- Planner — `Claude Opus 5.5 (copilot)`
   - Responsibility: research the repo, identify dependencies and edge cases, and produce an implementation plan that the orchestrator can break into phases.
   - Definition: `.github/agents/planner.agent.md`
 
-- Orchestrator — `Claude Sonnet 5.5 (copilot)`
+- Orchestrator — `Claude Opus 5.5 (copilot)`
   - Responsibility: manage the workflow, delegate work to specialist agents, keep phases non-overlapping, and verify that the final result fits together.
   - Definition: `.github/agents/orchestrator.agent.md`
 
