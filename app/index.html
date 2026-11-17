@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A quick view of project status, ownership, activity, and priority.">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard__header">
+        <p class="dashboard__eyebrow">Team overview</p>
+        <h1>Project Pulse</h1>
+        <p>See what teams are working on, what changed recently, and where attention may be needed.</p>
+        <p>Project examples on this dashboard are illustrative sample data, not live updates.</p>
+      </header>
+
+      <section aria-labelledby="projects-heading">
+        <div class="dashboard__section-heading">
+          <h2 id="projects-heading">Projects</h2>
+        </div>
+        <p id="project-status" role="status" aria-live="polite">Loading project data…</p>
+        <div id="project-grid" class="project-grid" aria-label="Project cards"></div>
+      </section>
+    </main>
+
+    <script>
+      const projectGrid = document.querySelector("#project-grid");
+      const projectStatus = document.querySelector("#project-status");
+
+      function getDisplayValue(value, fallback) {
+        return typeof value === "string" && value.trim() ? value.trim() : fallback;
+      }
+
+      function getModifier(value) {
+        const normalized = typeof value === "string"
+          ? value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+          : "";
+        return normalized || "unknown";
+      }
+
+      function appendLabeledValue(parent, label, value, className) {
+        const wrapper = document.createElement("div");
+        const term = document.createElement("dt");
+        const description = document.createElement("dd");
+        term.textContent = label;
+        description.textContent = value;
+        if (className) {
+          description.className = className;
+        }
+        wrapper.append(term, description);
+        parent.append(wrapper);
+      }
+
+      function createProjectCard(project) {
+        const card = document.createElement("article");
+        card.className = "project-card";
+
+        const cardHeader = document.createElement("header");
+        cardHeader.className = "project-card__header";
+
+        const name = document.createElement("h3");
+        name.className = "project-card__name";
+        name.textContent = getDisplayValue(project.name, "Untitled project");
+
+        const statusValue = getDisplayValue(project.status, "Status unavailable");
+        const status = document.createElement("span");
+        status.className = `status-badge status-badge--${getModifier(project.status)}`;
+        status.textContent = statusValue;
+        cardHeader.append(name, status);
+
+        const summary = document.createElement("p");
+        summary.className = "project-card__summary";
+        summary.textContent = getDisplayValue(project.summary, "No summary provided.");
+
+        const meta = document.createElement("dl");
+        meta.className = "project-card__meta";
+        appendLabeledValue(
+          meta,
+          "Owner",
+          getDisplayValue(project.owner, "Owner unavailable"),
+          "project-card__owner"
+        );
+        appendLabeledValue(
+          meta,
+          "Recent activity",
+          getDisplayValue(project.recentActivity, "No recent activity reported"),
+          "project-card__activity"
+        );
+
+        const priority = document.createElement("p");
+        priority.className = `project-card__priority project-card__priority--${getModifier(project.priority)}`;
+        const priorityLabel = document.createElement("span");
+        priorityLabel.textContent = "Priority: ";
+        const priorityValue = document.createElement("strong");
+        priorityValue.textContent = getDisplayValue(project.priority, "Not set");
+        priority.append(priorityLabel, priorityValue);
+
+        card.append(cardHeader, summary, meta, priority);
+        return card;
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("project-data.json");
+          if (!response.ok) {
+            throw new Error(`The project data request failed (${response.status}).`);
+          }
+
+          const data = await response.json();
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("The project data file must contain a projects array.");
+          }
+
+          if (data.projects.length === 0) {
+            projectStatus.textContent = "No projects are available yet.";
+            return;
+          }
+
+          const cards = document.createDocumentFragment();
+          data.projects.forEach((project) => {
+            cards.append(createProjectCard(project && typeof project === "object" ? project : {}));
+          });
+          projectGrid.append(cards);
+          projectStatus.textContent = `${data.projects.length} project${data.projects.length === 1 ? "" : "s"} loaded.`;
+        } catch (error) {
+          projectStatus.setAttribute("role", "alert");
+          projectStatus.textContent = `Unable to load projects. ${error.message} Make sure the dashboard is served over HTTP and try again.`;
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>

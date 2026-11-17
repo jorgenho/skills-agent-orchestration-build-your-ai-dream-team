@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "Northstar Analytics",
+      "owner": "Maya Chen",
+      "status": "In progress",
+      "recentActivity": "Completed the first round of dashboard usability interviews.",
+      "priority": "High",
+      "summary": "Build a shared analytics view that helps teams spot adoption trends earlier."
+    },
+    {
+      "name": "Atlas Onboarding",
+      "owner": "Jordan Lee",
+      "status": "Planned",
+      "recentActivity": "Drafted the onboarding checklist and identified pilot teams.",
+      "priority": "Medium",
+      "summary": "Make it easier for new contributors to get productive in their first week."
+    },
+    {
+      "name": "Greenline Migration",
+      "owner": "Sam Rivera",
+      "status": "At risk",
+      "recentActivity": "Found a compatibility issue during the staging data review.",
+      "priority": "High",
+      "summary": "Move legacy reporting workloads to the supported data platform."
+    },
+    {
+      "name": "Help Center Refresh",
+      "owner": "Taylor Morgan",
+      "status": "Complete",
+      "recentActivity": "Published the revised guides and shared them with support.",
+      "priority": "Low",
+      "summary": "Update common support articles with clearer, task-focused guidance."
+    }
+  ]
+}
